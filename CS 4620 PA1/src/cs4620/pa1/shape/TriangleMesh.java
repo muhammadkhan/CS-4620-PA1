@@ -1,5 +1,6 @@
 package cs4620.pa1.shape;
 
+
 import javax.media.opengl.GL2;
 
 public abstract class TriangleMesh extends Mesh {
@@ -35,13 +36,14 @@ public abstract class TriangleMesh extends Mesh {
 	
 	public final void render(GL2 gl)
 	{
-		// TODO: (Problem 1) Fill in the code to render the mesh.
-		gl.glBegin(GL2.GL_QUADS);
+		gl.glBegin(GL2.GL_TRIANGLES);
 		{
-			for(int i = 0; i < vertices.length; i += 3){
-				gl.glNormal3d(normals[i], normals[i + 1], normals[i + 2]);
-				gl.glVertex3d(vertices[i], vertices[i + 1], vertices[i + 2]);
-			}
+			
+			for (int i = 0; i < triangles.length; i++ ){
+				int point_index = triangles[i] * 3;
+				gl.glVertex3f(vertices[point_index], vertices[point_index +1], vertices [point_index + 2]);
+				gl.glNormal3f(normals[point_index], normals[point_index + 1], normals[point_index + 2]);
+			}			
 		}
 		gl.glEnd();
 	}
