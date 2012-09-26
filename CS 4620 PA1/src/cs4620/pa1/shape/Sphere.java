@@ -1,33 +1,61 @@
 package cs4620.pa1.shape;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
 
 public class Sphere extends TriangleMesh 
 {
-	private ArrayList<Point3f> point3fs = new ArrayList<Point3f>();
-	private ArrayList<Float> verticesAL = new ArrayList<Float>();
-	private ArrayList<Float> normalsAL = new ArrayList<Float>();
-	private ArrayList<Integer> trianglesAL = new ArrayList<Integer>();
-	
 	@Override
 	public void buildMesh(float tolerance)
 	{
-		// TODO: (Problem 2) Fill in the code to create a sphere mesh.
-		point3fs.add(new Point3f(0.0f, 0.0f, 1.0f));
-		for(float phi = (float)Math.atan(tolerance); phi <= Math.PI; phi += Math.atan(tolerance)){
-			for(float theta = 0; theta <= 2*Math.PI; theta += (float)Math.atan(tolerance)){
-				point3fs.add(sphToCar(1, theta, phi));
+		int lats = (int)Math.ceil(2*Math.PI / tolerance);
+		int longs = (int)Math.ceil(4*Math.PI / tolerance);
+		
+		
+		int numV = (longs + 1 ) * (lats + 1);
+		float[] vertexArr = new float[3*numV];
+		float[] normalArr = new float[3*numV];
+		
+ 
+		for(int i = 0;i <= lats;i++)
+			for(int j = 0;j <= longs;j++){
+				float th = (float) (i * Math.PI / lats);
+				float ph = (float) (j * 2 * Math.PI / longs);
+				Point3f p = sphToCar(1.0f,th,ph);
+				int index = j + longs*i;
+				
+				vertexArr[3*index] = p.x;
+				vertexArr[3*index + 1] = p.y;
+				vertexArr[3*index + 2] = p.z;
+				
+				//this is the same because it is a unit sphere.
+				normalArr[3*index] = p.x ;
+				normalArr[3*index + 1] = p.y;
+				normalArr[3*index + 2] = p.z;
+			}
+		
+		int numT = lats * longs * 2;
+		int[] triangles = new int[numT*3];
+		int n = 0;
+		for(int i = 0;i < lats;i++)
+		{
+			int i_next = i + 1;
+			for(int j = 0;j<longs;j++)
+			{
+				int j_next = j + 1;
+				triangles[n] = i*longs + j;
+				triangles[n + 1] = i_next*longs+j;
+				triangles[n + 2] = i*longs+j_next;
+				
+				triangles[n + 3] = i*longs+j_next;
+				triangles[n + 4] = i_next*longs+j;
+				triangles[n + 5] = i_next*longs+j_next;
+				n += 6;
 			}
 		}
-		//float[] v = makeVArr();
-		//float[] n = makeNArr();
-		//int[] t = makeTArr();
-		//setMeshData(v, n, t);
+		setMeshData(vertexArr, normalArr, triangles);
 	}
 
 	@Override
@@ -38,50 +66,11 @@ public class Sphere extends TriangleMesh
 		return result;
 	}
 	
+	//goes from spherical to cartesian points
 	private Point3f sphToCar(float rho, float theta, float phi){
 		float x = (float)(rho*Math.sin(phi)*Math.cos(theta));
 		float y = (float)(rho*Math.sin(phi)*Math.sin(theta));
 		float z = (float)(rho*Math.cos(phi));
 		return new Point3f(x,y,z);
-	}
-	
-	private float[] makeVArr(){
-		for(Point3f p : point3fs){
-			verticesAL.add(p.x);
-			verticesAL.add(p.y);
-			verticesAL.add(p.z);
-		}
-		float[] varr = new float[verticesAL.size()];
-		for(int i = 0; i < varr.length; i++)
-			varr[i] = verticesAL.get(i);
-		return varr;
-	}
-	
-	private float[] makeNArr(){
-		for(int i = 0; i < point3fs.size(); i++){
-			Point3f p1 = point3fs.get(i);
-			Point3f p2;
-			if(i + 1 == point3fs.size())
-				p2 = point3fs.get(1);
-			else
-				p2 = point3fs.get(i + 1);
-			Vector3f v1 = new Vector3f(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
-			Vector3f v2 = new Vector3f(-p1.x, -p1.y, -p1.z);
-			Vector3f cross = new Vector3f();
-			cross.cross(v1, v2);
-			cross.normalize(cross);
-			normalsAL.add(cross.x);
-			normalsAL.add(cross.y);
-			normalsAL.add(cross.z);
-		}
-		float[] narr = new float[normalsAL.size()];
-		for(int i = 0; i < narr.length; i++)
-			narr[i] = normalsAL.get(i);
-		return narr;
-	}
-	
-	private int[] makeTArr(){
-		
-		return null;
 	}
 }
