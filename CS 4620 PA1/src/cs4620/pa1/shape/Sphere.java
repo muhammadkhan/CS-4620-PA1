@@ -19,8 +19,8 @@ public class Sphere extends TriangleMesh
 		float[] normalArr = new float[3*numV];
 		
  
-		for(int i = 0;i <= lats;i++)
-			for(int j = 0;j <= longs;j++){
+		for(int i = 0; i <= lats; i++){
+			for(int j = 0; j <= longs; j++){
 				float th = (float) (i * Math.PI / lats);
 				float ph = (float) (j * 2 * Math.PI / longs);
 				Point3f p = sphToCar(1.0f,th,ph);
@@ -35,14 +35,14 @@ public class Sphere extends TriangleMesh
 				normalArr[3*index + 1] = p.y;
 				normalArr[3*index + 2] = p.z;
 			}
-		
+		}
 		int numT = lats * longs * 2;
 		int[] triangles = new int[numT*3];
 		int n = 0;
 		for(int i = 0;i < lats;i++)
 		{
 			int i_next = i + 1;
-			for(int j = 0;j<longs;j++)
+			for(int j = 0; j < longs; j++)
 			{
 				int j_next = j + 1;
 				triangles[n] = i*longs + j;
