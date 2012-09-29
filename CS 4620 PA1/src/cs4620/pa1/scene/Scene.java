@@ -112,12 +112,34 @@ public class Scene
 
 	public void render(GL2 gl)
 	{
-		// TODO: (Problem 3) Fill in the code to render the scene.		
+		process((SceneNode)(treeModel.getRoot()), gl, false);
 	}
 
 	public void renderForPicking(GL2 gl)
 	{		
-		// TODO: (Problem 3) Fill in the code to render the scene for picking.
+		process((SceneNode)(treeModel.getRoot()), gl, false);
+	}
+	
+	private void process(SceneNode n, GL2 gl, boolean forPicking){
+		if(n instanceof TransformationNode){
+			TransformationNode tnode = (TransformationNode)n;
+			gl.glPushMatrix();
+			gl.glScalef(tnode.scaling.x, tnode.scaling.y, tnode.scaling.z);
+			gl.glRotatef(tnode.rotation.x, 1, 0, 0);
+			gl.glRotatef(tnode.rotation.y, 0, 1, 0);
+			gl.glRotatef(tnode.rotation.z, 0, 0, 1);
+			gl.glTranslatef(tnode.translation.x, tnode.translation.y, tnode.translation.z);
+			if(tnode instanceof MeshNode){
+				MeshNode mnode = (MeshNode)tnode;
+				if(!forPicking)
+					mnode.draw(gl);
+				else
+					mnode.drawForPicking(gl);
+			}
+			gl.glPopMatrix();
+			for(int i = 0; i < n.getChildCount(); i++)
+				process((SceneNode)(n.getChildAt(i)), gl, forPicking);
+		}
 	}
 
 	/**

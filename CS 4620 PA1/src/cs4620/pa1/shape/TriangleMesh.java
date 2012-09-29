@@ -41,8 +41,10 @@ public abstract class TriangleMesh extends Mesh {
 			
 			for (int i = 0; i < triangles.length; i++ ){
 				int point_index = triangles[i] * 3;
-				gl.glVertex3f(vertices[point_index], vertices[point_index +1], vertices [point_index + 2]);
-				gl.glNormal3f(normals[point_index], normals[point_index + 1], normals[point_index + 2]);
+				if(point_index < vertices.length){
+					gl.glVertex3f(vertices[point_index], vertices[point_index +1], vertices [point_index + 2]);
+					gl.glNormal3f(normals[point_index], normals[point_index + 1], normals[point_index + 2]);
+				}
 			}			
 		}
 		gl.glEnd();

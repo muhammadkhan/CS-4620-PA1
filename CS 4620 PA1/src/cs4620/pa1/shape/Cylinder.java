@@ -11,14 +11,11 @@ public class Cylinder extends TriangleMesh
 	@Override
 	public void buildMesh(float tolerance)
 	{
-		// TODO: (Problem 2) Fill in the code to create a cylinder mesh.
 		//radius is one. 
 		
-		int radial_sectors = (int) Math.ceil(2*Math.PI / tolerance); // this can be changed later.
 		float radial_interval = (float)(2*Math.PI * tolerance/7); 
 		
 		//we include both faces and the two axis points
-		int vCount = (radial_sectors * 2) + 2;
 		ArrayList<Float> totalVertices = new ArrayList<Float>();
 		ArrayList<Float> topVs = new ArrayList<Float>();
 		ArrayList<Float> topNs = new ArrayList<Float>();
@@ -94,21 +91,19 @@ public class Cylinder extends TriangleMesh
 		
 		ArrayList<Integer> triangleAL = new ArrayList<Integer>();
 		//top circle:
-		System.out.println("vertices in top circle: " + topVs.size());
 		for(int i = 3; i < topVs.size(); i += 3){
 			triangleAL.add(0);
 			triangleAL.add(getIndexOf(vertices, topVs.get(i)));
 			if(i + 3 >= topVs.size()){
-				triangleAL.add(getIndexOf(vertices, topVs.get(3)));
+				triangleAL.add(3 + getIndexOf(vertices, topVs.get(3)));
 				break;
 			} else{
-				System.out.println(i);
 				triangleAL.add(getIndexOf(vertices, topVs.get(i + 3)));
 			}
 		}
-		/*//bottom circle:
-		for(int i = 0; i < bottomVs.size() - 3; i += 3){
-			triangleAL.add(3*vCount - 3);
+		//bottom circle:
+		for(int i = 0; i < bottomVs.size(); i += 3){
+			triangleAL.add(totalVertices.size() - 3);
 			triangleAL.add(getIndexOf(vertices, bottomVs.get(i)));
 			if(i + 3 >= bottomVs.size() - 3){
 				triangleAL.add(getIndexOf(vertices, bottomVs.get(0)));
@@ -117,21 +112,21 @@ public class Cylinder extends TriangleMesh
 				triangleAL.add(getIndexOf(vertices, bottomVs.get(i + 3)));
 		}
 		//curved surface:
-		for(int i = 3; i < topVs.size(); i += 6){
+		for(int i = 3; i < topVs.size(); i += 3){
 			triangleAL.add(getIndexOf(vertices, topVs.get(i)));
 			triangleAL.add(getIndexOf(vertices, bottomVs.get(i)));
-			if(i + 6 >= topVs.size())
+			if(i + 3 >= topVs.size())
 				triangleAL.add(getIndexOf(vertices, topVs.get(0)));
 			else
-				triangleAL.add(getIndexOf(vertices, topVs.get(i + 6)));
+				triangleAL.add(getIndexOf(vertices, topVs.get(i + 3)));
 			//-------------
 			triangleAL.add(getIndexOf(vertices, bottomVs.get(i)));
-			triangleAL.add(getIndexOf(vertices, topVs.get(i + 6)));
-			if(i + 6 >= bottomVs.size())
+			triangleAL.add(getIndexOf(vertices, topVs.get(i + 2)));
+			if(i + 3 >= bottomVs.size())
 				triangleAL.add(getIndexOf(vertices, bottomVs.get(0)));
 			else
-				triangleAL.add(getIndexOf(vertices, bottomVs.get(i + 6)));
-		}*/
+				triangleAL.add(getIndexOf(vertices, bottomVs.get(i + 3)));
+		}
 		int[] triangles = new int[triangleAL.size()];
 		for(int i = 0; i < triangles.length; i++)
 			triangles[i] = triangleAL.get(i);
